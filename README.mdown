@@ -1,0 +1,17 @@
+#CoffeeBot
+
+I wanted to write a campfire bot.  So I did it in CoffeeScript to teach myself a thing or two.  And that's fun!
+
+##Running
+
+	coffee server.coffee
+	
+Or continuous-integration-styles:
+	
+	cake dev
+	
+(Heavily lifted from the [Riak.js Cakefile](https://github.com/frank06/riak-js/blob/master/Cakefile))
+
+##Credit where credit due (dude)
+
+Lots of this is stolen/learned/swiped from [Jashkenas](https://github.com/jashkenas/coffee-script-tmbundle), of course.
