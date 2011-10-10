@@ -24,9 +24,7 @@ exports.Campfire = Campfire = (options, callback) ->
 
 		response.on "end", ->
 			body = ""
-			# console.log 'datters:'
-			# console.log data
-			console.log 'log message: ' + JSON.stringify(data)
+			console.log 'log message: ' + JSON.decode(data)
 
 			coffeeFound = data.indexOf 'coffee'
 
