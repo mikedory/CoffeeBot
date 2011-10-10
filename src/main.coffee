@@ -38,8 +38,7 @@ app.configure(() ->
 app.get '/', (req, res) ->
 
   text = 'coffee'
-
-  campfire.Campfire {
+  campcall = campfire.Campfire {
     host: "doryexmachina.campfirenow.com"
     path: "/search/coffee.json"
     method: 'GET'
@@ -49,22 +48,30 @@ app.get '/', (req, res) ->
       log 'ERRORZ:'
       log err
     else
-      log 'MESSAGE:'
-      log msg
+      # log msg
+      gettify(text, msg)
 
-  # res.writeHeader 200, "Content-Type": "text/plain"
-  # response = gettify('coffee', userToken)
-  # response = "<h1>hello!</h1><p>#{msg}</p>"
-  # res.write res
-  res.end()
+  # write it out
+  if (campcall)
+    res.writeHeader 200, "Content-Type": "text/plain"
+    res.end "yay!\n"
+  else 
+    res.writeHeader 500, "Content-Type": "text/plain"
+    res.end "boo.\n"
 
 # check to see if a site is up (thanks to Pickle!)
-app.get '/isitup/', (req, res) ->
-  isup.isItUp 'google.com', (err, msg) ->
+app.get '/isitup/:url', (req, res) ->
+  isup.isItUp req.params.url, (err, msg) ->
     if err or not msg
-      console.log err
+      log err
     else
-      console.log msg
+      log msg
+  
+  res.writeHeader 200, "Content-Type": "text/plain"
+  res.end
+
+gettify = (text, msg) ->
+  log "Whilst searching for #{text} I found: '#{msg}'"
 
 
 # actions '/action/' (GET)

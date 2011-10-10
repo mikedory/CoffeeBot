@@ -14,7 +14,6 @@ exports.Campfire = Campfire = (options, callback) ->
 			'Host' : options.host
 			'Content-Type' : 'application/json'
 		}
-	console.log opts
 
 	request = https.request opts, (response) ->
 
@@ -24,12 +23,21 @@ exports.Campfire = Campfire = (options, callback) ->
 
 		response.on "end", ->
 			body = ""
-			console.log 'log message: ' + JSON.decode(data)
+			# console.log "log message: #{data}"
 
-			coffeeFound = data.indexOf 'coffee'
+			# set up the routes
+			# coffeeFound = data.indexOf 'coffee'
+
+			# find the last message
+			messages = JSON.parse(data).messages
+			message = messages[0]
+			coffeeFound = message.body.indexOf 'coffee'
+
+			# make the time work-with-able
+			time = new Date message.created_at
 
 			if coffeeFound isnt -1
-				body = 'we have coffee!'
+				body = "Coffee was requested at #{time}!"
 			else
 				body = null
 
