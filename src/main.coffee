@@ -69,12 +69,11 @@ app.get '/isitup/:url', (req, res) ->
 campfireSearch = (text) ->
   
   # set it up
-  options = {
+  options =
     host: "doryexmachina.campfirenow.com"
     path: "/search/coffee.json"
     method: 'GET'
     userToken: userToken
-  }
 
   # make the call
   campcall = campfire.Campfire options, (err, msg) ->
