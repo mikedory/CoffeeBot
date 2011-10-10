@@ -32,55 +32,67 @@ app.configure(() ->
 )
 
 
-### - APP LOGIC - ###
+### - APP ROUTES - ###
 
 # root '/' (GET)
-app.get '/', (req, res) ->
-
-  text = 'coffee'
-  campcall = campfire.Campfire {
-    host: "doryexmachina.campfirenow.com"
-    path: "/search/coffee.json"
-    method: 'GET'
-    userToken: userToken
-  }, (err, msg) ->
-    if err or not msg
-      log 'ERRORZ:'
-      log err
-    else
-      # log msg
-      gettify(text, msg)
-
+app.get '/search/:term', (req, res) ->
+  campcall = campfireSearch(req.params.term)
   # write it out
   if (campcall)
     res.writeHeader 200, "Content-Type": "text/plain"
     res.end "yay!\n"
   else 
-    res.writeHeader 500, "Content-Type": "text/plain"
+    res.writeHeader 400, "Content-Type": "text/plain"
     res.end "boo.\n"
 
 # check to see if a site is up (thanks to Pickle!)
 app.get '/isitup/:url', (req, res) ->
-  isup.isItUp req.params.url, (err, msg) ->
+  message = isup.isItUp req.params.url, (err, msg) ->
     if err or not msg
+      res.writeHeader 400, "Content-Type": "text/plain"
+      log err
+      res.end "#{err}\n"
+    else
+      res.writeHeader 200, "Content-Type": "text/plain"
+      log msg
+      res.end "#{msg}\n"
+  
+  # res.writeHeader 200, "Content-Type": "text/plain"
+  # res.end
+
+
+
+
+### - action stuff! - ###
+
+# get something
+campfireSearch = (text) ->
+  
+  # set it up
+  options = {
+    host: "doryexmachina.campfirenow.com"
+    path: "/search/coffee.json"
+    method: 'GET'
+    userToken: userToken
+  }
+
+  # make the call
+  campcall = campfire.Campfire options, (err, msg) ->
+    if err or not msg
+      log 'ERRORZ:'
       log err
     else
-      log msg
-  
-  res.writeHeader 200, "Content-Type": "text/plain"
-  res.end
+      # log msg
+      log("#{text} and #{msg}")
+      return msg
+    log msg
+    log 'oi'
+    return msg
+  return campcall
 
-gettify = (text, msg) ->
-  log "Whilst searching for #{text} I found: '#{msg}'"
 
 
-# actions '/action/' (GET)
-app.get '/action/:action', (req, res, userToken) ->
-  res.writeHeader 200, "Content-Type": "text/plain"
-  text = JSON.stringify message: {text:"It is time to #{req.params.action}"}
-  postify(text, userToken)
-  res.write(text)
-  res.end()
+
 
 # # the action of getting messages
 # gettify = (text, userToken) ->
