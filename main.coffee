@@ -24,16 +24,13 @@ app.configure(() ->
 )
 
 
-client = http.createClient 80, site
-
-
 ### - APP LOGIC - ###
 
 # root '/' (GET)
-app.get '/', (req, res) ->
+app.get '/', (req, res, user_token) ->
   res.writeHeader 200, "Content-Type": "text/plain"
-  res.write "Hello, World!"
-  res.write req.params
+  response = gettify('coffee', user_token)
+  res.write response
   res.end()
 
 	# res.render 'index.jade',
@@ -48,13 +45,31 @@ app.get '/action/:action', (req, res, user_token) ->
     res.write(text)
     res.end()
 
+# the action of getting messages
+gettify = (text, user_token) ->
+  # campfireRoom = 'doryexmachina.campfirenow.com/room/443472/'
+  campfireRoom = 'doryexmachina.campfirenow.com/'
+  campfireURL = 'https://#{user_token}:X@#{campfireRoom}search/#{text}.json'
+  http.get(campfireURL, (err, content, response) =>
+    if err throw err
+    r = ''
+    for m in JSON.parse(content).results
+      r = r + m.text + "<br />"
+    this.contentType 'text/json'
+    this.respond(200, r)
+
+
 # the action of posting a message
 postify = (text, user_token) ->
-  campfireURL = 'https://#{user_token}:X@doryexmachina.campfirenow.com/room/443472/speak.json'
-  app.post campfireURL, (req, res, campfireURL, text) ->
-      # res.writeHeader "Content-Type": "text/json"
-      res.send(text)
-      res.send('text', { 'Content-Type': 'text/plain' });
+  campfireRoom = 'doryexmachina.campfirenow.com/room/443472/'
+  campfireURL = 'https://#{user_token}:X@#{campfireRoom}speak.json'
+  http.get(campfireURL, (err, content, response) =>
+    if err throw err
+    r = ''
+    for m in JSON.parse(content).results
+      r = r + m.text + "<br />"
+    this.contentType 'text/json'
+    this.respond(200, r)
 
 
 
