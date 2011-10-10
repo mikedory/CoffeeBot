@@ -10,7 +10,7 @@ exports.Campfire = Campfire = (options, callback) ->
 		userToken: options.userToken
 		authorization: 'Basic ' + encode("#{options.userToken}" + ':x')
 		headers: {
-			'Authorization' : 'Basic ' + ("#{options.userToken}" + ':x')
+			'Authorization' : 'Basic ' + encode("#{options.userToken}" + ':x')
 			'Host' : options.host
 			'Content-Type' : 'application/json'
 		}
