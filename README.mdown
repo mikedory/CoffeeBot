@@ -3,26 +3,10 @@
 I wanted to write a campfire bot.  So I did it in CoffeeScript to teach myself a thing or two.  And that's fun!
 
 
-<!-- ## main.coffee
-
-	coffee -w main.coffe [user_token]
-
- --><!-- Install fugue and express via NPM:
-
-	npm install fugue
-	npm install express
- -->
 ##Running
-
-<!-- coffee server.coffee -->
 
 	coffee -w main.coffe [user_token]	
 
-<!-- Or continuous-integration-styles:
-	
-	cake dev
- -->	
-(Heavily lifted from the [Riak.js Cakefile](https://github.com/frank06/riak-js/blob/master/Cakefile))
 
 ##Credit where credit due (dude)
 
