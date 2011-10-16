@@ -5,7 +5,7 @@ I wanted to write a campfire bot.  So I did it in CoffeeScript to teach myself a
 
 ##Running
 
-	coffee -w main.coffe [user_token]	
+	coffee -w main.coffee {\"userToken\":\"[token]\"}
 
 
 ##Credit where credit due (dude)

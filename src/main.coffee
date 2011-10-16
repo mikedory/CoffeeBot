@@ -1,6 +1,10 @@
-### Set it up ###
-
+# main.coffee
+# the, um, main coffeescript file
+# 
 # run as coffee -w main.coffee {\"userToken\":\"[token]\"}
+
+
+### Set it up ###
 
 # require stuff!
 express = require 'express'
