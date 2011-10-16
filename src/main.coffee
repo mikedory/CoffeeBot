@@ -100,21 +100,19 @@ campfireSearch = (text, last = "") ->
   # set it up
   options =
     host: "doryexmachina.campfirenow.com"
-    path: "/search/coffee.json"
+    path: "/search/#{text}.json"
     method: 'GET'
     userToken: userToken
 
   # make the call
   campfire.Campfire options, (err, msg) ->
     if err or not msg
-      log("ERRORZ: #{err}")
+      log("#{text} | #{msg}")
+      campfireSpeak(":mega: There has been a reqeust for #{msg}!")
     else
-      log("#{text} and #{msg}")
+      log("#{text} | #{msg}")
     return msg
-
-  call = 'yerp'
-  log "campcall: #{call}"
-  return call
+  return
 
 
 # helper function that responds to the client
@@ -125,6 +123,8 @@ respond = (res, code, contentType, data) ->
     res.write data
     res.end()
 
+campfireSpeak = (message) ->
+  log message
 
 # # the action of getting messages
 # gettify = (text, userToken) ->
