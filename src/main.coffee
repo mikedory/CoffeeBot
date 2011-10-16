@@ -1,7 +1,6 @@
 ### Set it up ###
 
-# run as coffee -w main.coffee {"userToken":"[token]"}
-# actually, for now, run as coffee -w main.coffee [token]
+# run as coffee -w main.coffee {\"userToken\":\"[token]\"}
 
 # require stuff!
 express = require 'express'
@@ -13,19 +12,19 @@ campfire = require "./campfire.coffee"
 isup = require "./examples/isitup.coffee"
 
 # app settings
-app = express.createServer(
-  express.logger()
-  , express.bodyParser()
-)
+app = express.createServer()
 log = console.log
 
 # command line args
 arguments = process.argv.splice(2)
+json = JSON.parse(arguments)
+
+
 # userToken = arguments["userToken"]
-userToken = arguments[0]
+userToken = json["userToken"]
 campfireRoom = "doryexmachina.campfirenow.com"
 
-# setup
+# setu up the app variables
 app.configure(() ->
   app.set 'views', "#{__dirname}/static/views"
   app.set 'view engine', 'jade'
@@ -35,38 +34,64 @@ app.configure(() ->
 ### - APP ROUTES - ###
 
 # root '/' (GET)
+app.get '/', (req, res) ->
+  console.log req.method, req.url
+  # key = req.url[1...]
+  contentType = 'text/plain'
+  code = 200
+  value = "#{req.method} | #{req.url}\n"
+  respond res, code, contentType, value + '\n'
+
+
+# search '/search/' (GET)
 app.get '/search/:term', (req, res) ->
-  campcall = campfireSearch(req.params.term)
-  # write it out
-  if (campcall)
-    res.writeHeader 200, "Content-Type": "text/plain"
-    res.end "yay!\n"
-  else 
-    res.writeHeader 400, "Content-Type": "text/plain"
-    res.end "boo.\n"
+  console.log req.method, req.url
+  # key = req.url[1...]
+  contentType = 'text/plain'
+  code = 404
+
+  try 
+    if not req.params.term
+      value = 'no term =('
+      respond res, code, contentType, value + '\n'
+    else
+      campcall = campfireSearch(req.params.term)
+      # write it out
+      if (campcall)
+        code = 200
+        value = 'yay!'
+        respond res, code, contentType, value + '\n'
+      else 
+        value = 'boo.'
+        respond res, code, contentType, value + '\n'
+  catch error
+    value = error
+
+
 
 # check to see if a site is up (thanks to Pickle!)
 app.get '/isitup/:url', (req, res) ->
+  console.log req.method, req.url
+  key = req.url[1...]
+  contentType = 'text/plain'
+  code = 404
+
+
   message = isup.isItUp req.params.url, (err, msg) ->
     if err or not msg
-      res.writeHeader 400, "Content-Type": "text/plain"
-      log err
-      res.end "#{err}\n"
+      code = 400
+      value = err
+      respond res, code, contentType, value + '\n'
     else
-      res.writeHeader 200, "Content-Type": "text/plain"
-      log msg
-      res.end "#{msg}\n"
+      code = 200
+      value = msg
+      respond res, code, contentType, value + '\n'
   
-  # res.writeHeader 200, "Content-Type": "text/plain"
-  # res.end
-
-
-
 
 ### - action stuff! - ###
 
 # get something
-campfireSearch = (text) ->
+campfireSearch = (text, last = "") ->
   
   # set it up
   options =
@@ -76,21 +101,25 @@ campfireSearch = (text) ->
     userToken: userToken
 
   # make the call
-  campcall = campfire.Campfire options, (err, msg) ->
+  campfire.Campfire options, (err, msg) ->
     if err or not msg
-      log 'ERRORZ:'
-      log err
+      log("ERRORZ: #{err}")
     else
-      # log msg
       log("#{text} and #{msg}")
-      return msg
-    log msg
-    log 'oi'
     return msg
-  return campcall
+
+  call = 'yerp'
+  log "campcall: #{call}"
+  return call
 
 
-
+# helper function that responds to the client
+respond = (res, code, contentType, data) ->
+    res.writeHead code,
+        'Content-Type': contentType
+        'Content-Length': data.length
+    res.write data
+    res.end()
 
 
 # # the action of getting messages

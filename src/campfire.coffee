@@ -23,14 +23,13 @@ exports.Campfire = Campfire = (options, callback) ->
 
 		response.on "end", ->
 			body = ""
-			# console.log "log message: #{data}"
-
-			# set up the routes
-			# coffeeFound = data.indexOf 'coffee'
+			console.log "log message: #{data}"
 
 			# find the last message
 			messages = JSON.parse(data).messages
 			message = messages[0]
+
+			# set up the routes
 			coffeeFound = message.body.indexOf 'coffee'
 
 			# make the time work-with-able
